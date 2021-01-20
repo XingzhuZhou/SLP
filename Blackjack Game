@@ -1,0 +1,129 @@
+"""
+Blackjack Game between a player and a dealer without bets
+"""
+
+import random
+import time
+
+suits = ['♥', '♠', '♦', '♣']
+names = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+values = {'A': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7,
+          '8': 8, '9': 9, '10': 10, 'J': 10, 'Q': 10, 'K': 10}  # A can also be 11. Talk later.
+while True:
+    print('Ready to start a game? [Y/N]')
+    reply = input().upper()  # Someone may enter a lowercase letter.
+    if reply not in ['Y', 'N']:  # Someone may enter an undesired letter.
+        print('Please enter Y or N.')
+    elif reply == 'N':
+        print('See you.')
+        exit()
+    while reply == 'Y':
+        # Create a shuffled 52-card deck.
+        deck = []
+        for s in suits:
+            for n in names:
+                deck.append(s + n)
+        random.shuffle(deck)
+
+        # Deal 2 cards to player and dealer.
+        player = []
+        dealer = []
+        for i in range(2):
+            player.append(deck.pop())
+        for i in range(2):
+            dealer.append(deck.pop())
+
+        # Define a function to calculate the sum
+        def tot(x):
+            total = 0
+            for card in x:
+                total += values[card[1:]]
+            for card in x:
+                if card[1] == 'A':
+                    if total + 10 <= 21:  # Can A be 11 here?
+                        total += 10
+            return total
+
+        # Start 'gambling'!
+        print('Welcome to Blackjack!')
+        time.sleep(1)
+        print('Dealing cards...')
+        time.sleep(1)
+        print('Your cards:', *player)  # Two cards face up
+        time.sleep(1)
+        print('Dealer\'s cards:', dealer[0], 'X')  # One card face up
+        p_total = tot(player)  # Would be boring if printed out now.
+        if p_total == 21:
+            print('You have Blackjack! You win!')
+        while p_total != 21:
+            time.sleep(1)
+            if p_total > 21:
+                print('Your sum:', p_total)
+                time.sleep(1)
+                print('Oh, no. You have busted.')
+                break
+            else:
+                print('Will you Stand, Hit, or Quit? [S/H/Q]')
+                player_choice = input().upper()
+                if player_choice not in ['S', 'H', 'Q']:
+                    print('Please only enter S, H, or Q.')
+                elif player_choice == 'Q':
+                    print('Good luck next time.')
+                    break
+                elif player_choice == 'H':
+                    player.append(deck.pop())
+                    print('Your cards:', *player)
+                    p_total = tot(player)
+                    if p_total == 21:
+                        time.sleep(2)
+                        print('21! Congrats! You win!')
+                        break
+                    else:
+                        continue
+                else:
+                    print('Your sum:', p_total)
+                    time.sleep(1)
+                    print('Dealer\'s cards:', *dealer)
+                    time.sleep(1)
+                    d_total = tot(dealer)
+                    print('Dealer\'s sum:', d_total)
+                    if d_total >= 17:
+                        if d_total > p_total:
+                            time.sleep(1)
+                            print('Sorry. You lost.')
+                            break
+                        elif d_total == p_total:
+                            time.sleep(1)
+                            print('Uh-oh. You tied.')
+                            break
+                        else:
+                            time.sleep(1)
+                            print('Congrats! You win!')
+                            break
+                    while d_total < 17:
+                        dealer.append(deck.pop())
+                        time.sleep(1)
+                        print('Dealer is picking up a new card...')
+                        time.sleep(1.5)
+                        print('Dealer picked up', dealer[-1])
+                        d_total = tot(dealer)
+                        time.sleep(1.5)
+                        print('Dealer\'s sum:', d_total)
+                    if d_total > 21:
+                        time.sleep(1)
+                        print('Dealer busted! You win!')
+                        break
+                    elif d_total < p_total:
+                        time.sleep(1)
+                        print('Congrats! You win!')
+                        break
+                    elif d_total > p_total:
+                        time.sleep(1)
+                        print('Sorry. You lost.')
+                        break
+                    else:
+                        time.sleep(1)
+                        print('Uh-oh. You tied.')
+                        break
+        time.sleep(1)
+        break
