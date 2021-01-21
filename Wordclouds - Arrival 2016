@@ -1,0 +1,33 @@
+"""
+compare word frequencies and word clouds 
+of the script and the original novel
+of American movie Arrival 2016 
+"""
+import re
+from wordcloud import WordCloud, STOPWORDS
+import matplotlib.pyplot as plt
+
+with open('C:/xxx/arrivalnovel.txt', 'r', encoding = 'UTF-8') as file:  # open a file
+    novel = file.read().lower().replace('\n', ' ')  # all words into lowercase
+with open('C:/xxx/arrivalscript.txt', 'r', encoding = 'UTF-8') as file:
+    script = file.read().lower().replace('\n', ' ')  # all words into lowercase
+
+def get_freq_cloud(content):
+    content = re.sub(r'\'s|\'m|\'d|\'ve|\'ll|\'re', '', content, re.S)  # remove abbreviations
+    words = re.findall('[a-z]+', content)  # find all words
+    counts = {}
+    freq = []
+    for w in words:
+        counts[w] = counts.get(w, 0) + 1
+    for key, value in counts.items():
+        freq.append([value, key])
+    freq.sort(reverse = True)
+    print(freq[:21])
+    stopwords = set(STOPWORDS)
+    cloud = WordCloud(background_color = 'white', stopwords = stopwords).generate(content)
+    plt.imshow(cloud)
+    plt.axis('off')
+    plt.show()
+
+print(get_freq_cloud(script))
+print(get_freq_cloud(novel))
